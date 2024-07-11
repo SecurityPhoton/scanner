@@ -1,6 +1,3 @@
-Here's a `README.md` for your network scanner project:
-
-```markdown
 # Network Scanner
 
 Network Scanner is a web-based application that scans a given network range to detect devices and their open ports. It provides an easy-to-use interface for network scanning and displays detailed information about discovered devices.
@@ -154,6 +151,3 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 ## License
 
 This project is licensed under the MIT License.
-```
-
-This `README.md` file provides a comprehensive overview of your network scanner project, including installation instructions, usage guidelines, and development setup. Adjust the repository URL and other details as necessary for your specific project.
