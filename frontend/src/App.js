@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './styles.css';
-import { Container, TextField, Button, Select, MenuItem, FormControl, InputLabel, Typography, Box, CircularProgress } from '@mui/material';
+import { Container, TextField, Button, Select, MenuItem, FormControl, InputLabel, Typography, Box, CircularProgress, Checkbox, FormControlLabel, } from '@mui/material';
 
 function App() {
   const [ipRange, setIpRange] = useState('');
@@ -9,13 +9,19 @@ function App() {
   const [scanResult, setScanResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showJson, setShowJson] = useState(false);
+  const [showRAW, setShowRAW] = useState(false);
+  const [verbose, setVerbose] = useState(false);
+  const [customParams, setCustomParams] = useState('');
 
   const handleScan = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('/api/scan-network', {
+      // api/scan-network
+      const response = await axios.post('http://127.0.0.1:8000/scan-network', {
         ip_range: ipRange,
-        scan_type: scanType
+        scan_type: scanType,
+        custom_params: scanType === 'custom' ? customParams : '',
+        verbose 
       });
       setScanResult(response.data);
     } catch (error) {
@@ -59,15 +65,43 @@ function App() {
     setShowJson(!showJson);
   };
 
+  const toggleRAW = () => {
+    setShowRAW(!showRAW);
+  };
+
   // Function to render formatted JSON
   const renderFormattedJSON = (data) => {
     return (
-      <div>
+<div>
         <h2>Scan Results (Table Format):</h2>
         {data.hosts.map((host) => (
           <div key={host.ip}>
             <h3>Host: {host.ip}</h3>
             <p>State: {host.state}</p>
+            {host.vendor && (
+              <div>
+                <h4>Vendor:</h4>
+                <ul>
+                  {Object.entries(host.vendor).map(([mac, vendor]) => (
+                    <li key={mac}>
+                      {mac}: {vendor}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {host.osmatches && host.osmatches.length > 0 && (
+              <div>
+                <h4>OS Matches:</h4>
+                <ul>
+                  {host.osmatches.map((osmatch, index) => (
+                    <li key={index}>
+                      {osmatch.name} (Accuracy: {osmatch.accuracy}%)
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             {host.protocols.map((protocol) => (
               <div key={protocol.protocol}>
                 <h4>Protocol: {protocol.protocol}</h4>
@@ -87,6 +121,20 @@ function App() {
             </pre>
           </div>
         )}
+        <div>
+        <button onClick={toggleRAW} style={{ marginTop: '10px' }}>
+          {showRAW ? 'Hide Raw' : 'Show RAW'}
+        </button>
+        
+        { showRAW && (
+          <div>
+            <h2>Raw Nmap Output:</h2>
+             <pre style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '5px' }}>
+               {data.raw_output}
+            </pre>
+        </div>
+        )}
+        </div>
       </div>
     );
   };
@@ -115,10 +163,33 @@ function App() {
             variant="outlined"
           >
             <MenuItem value="discovery">Discovery Scan</MenuItem>
+            <MenuItem value="arp_ping">ARP Ping Scan</MenuItem>
             <MenuItem value="common_ports">Most Common Ports</MenuItem>
             <MenuItem value="all_ports">All Ports (TCP and UDP)</MenuItem>
+            <MenuItem value="custom">Custom Scan</MenuItem>
           </Select>
         </FormControl>
+        {scanType === 'custom' && (
+          <FormControl fullWidth sx={{ my: 2 }}>
+            <TextField
+              label="Enter Custom Nmap Parameters"
+              value={customParams}
+              onChange={(e) => setCustomParams(e.target.value)}
+              variant="outlined"
+            />
+          </FormControl>
+        )}
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={verbose}
+              onChange={(e) => setVerbose(e.target.checked)}
+              name="verbose"
+              color="primary"
+            />
+          }
+          label="Verbose Output"
+        />
         <Button
           variant="contained"
           color="primary"
