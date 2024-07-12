@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './styles.css';
-import { Container, TextField, Button, Select, MenuItem, FormControl, InputLabel, Typography, Box, CircularProgress, Checkbox, FormControlLabel, } from '@mui/material';
+import { Container, TextField, Button, Select, MenuItem, FormControl, InputLabel, Typography, Box, CircularProgress, Checkbox, FormControlLabel } from '@mui/material';
+import { checkConnectivity } from './utils/checkConnectivity';
 
 function App() {
   const [ipRange, setIpRange] = useState('');
@@ -12,12 +13,21 @@ function App() {
   const [showRAW, setShowRAW] = useState(false);
   const [verbose, setVerbose] = useState(false);
   const [customParams, setCustomParams] = useState('');
+  const [isConnected, setIsConnected] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const connectivity = await checkConnectivity();
+      setIsConnected(connectivity);
+    }, 5000); // Check connectivity every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleScan = async () => {
     setLoading(true);
     try {
-      // api/scan-network
-      const response = await axios.post('http://127.0.0.1:8000/scan-network', {
+      const response = await axios.post('api/scan-network', {
         ip_range: ipRange,
         scan_type: scanType,
         custom_params: scanType === 'custom' ? customParams : '',
@@ -31,35 +41,32 @@ function App() {
     }
   };
 
-  // Function to render table format for ports
-  const renderTable = (ports) => {
-    return (
-      <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-        <thead>
-          <tr style={{ borderBottom: '1px solid #ddd' }}>
-            <th style={{ padding: '8px', textAlign: 'left' }}>Port</th>
-            <th style={{ padding: '8px', textAlign: 'left' }}>State</th>
-            <th style={{ padding: '8px', textAlign: 'left' }}>Service</th>
-            <th style={{ padding: '8px', textAlign: 'left' }}>Product</th>
-            <th style={{ padding: '8px', textAlign: 'left' }}>Version</th>
-            <th style={{ padding: '8px', textAlign: 'left' }}>Extra Info</th>
+  const renderTable = (ports) => (
+    <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+      <thead>
+        <tr style={{ borderBottom: '1px solid #ddd' }}>
+          <th style={{ padding: '8px', textAlign: 'left' }}>Port</th>
+          <th style={{ padding: '8px', textAlign: 'left' }}>State</th>
+          <th style={{ padding: '8px', textAlign: 'left' }}>Service</th>
+          <th style={{ padding: '8px', textAlign: 'left' }}>Product</th>
+          <th style={{ padding: '8px', textAlign: 'left' }}>Version</th>
+          <th style={{ padding: '8px', textAlign: 'left' }}>Extra Info</th>
+        </tr>
+      </thead>
+      <tbody>
+        {ports.map((port) => (
+          <tr key={port.port} style={{ borderBottom: '1px solid #ddd' }}>
+            <td style={{ padding: '8px' }}>{port.port}</td>
+            <td style={{ padding: '8px' }}>{port.state}</td>
+            <td style={{ padding: '8px' }}>{port.name}</td>
+            <td style={{ padding: '8px' }}>{port.product}</td>
+            <td style={{ padding: '8px' }}>{port.version}</td>
+            <td style={{ padding: '8px' }}>{port.extrainfo}</td>
           </tr>
-        </thead>
-        <tbody>
-          {ports.map((port) => (
-            <tr key={port.port} style={{ borderBottom: '1px solid #ddd' }}>
-              <td style={{ padding: '8px' }}>{port.port}</td>
-              <td style={{ padding: '8px' }}>{port.state}</td>
-              <td style={{ padding: '8px' }}>{port.name}</td>
-              <td style={{ padding: '8px' }}>{port.product}</td>
-              <td style={{ padding: '8px' }}>{port.version}</td>
-              <td style={{ padding: '8px' }}>{port.extrainfo}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  };
+        ))}
+      </tbody>
+    </table>
+  );
 
   const toggleJson = () => {
     setShowJson(!showJson);
@@ -69,76 +76,71 @@ function App() {
     setShowRAW(!showRAW);
   };
 
-  // Function to render formatted JSON
-  const renderFormattedJSON = (data) => {
-    return (
-<div>
-        <h2>Scan Results (Table Format):</h2>
-        {data.hosts.map((host) => (
-          <div key={host.ip}>
-            <h3>Host: {host.ip}</h3>
-            <p>State: {host.state}</p>
-            {host.vendor && (
-              <div>
-                <h4>Vendor:</h4>
-                <ul>
-                  {Object.entries(host.vendor).map(([mac, vendor]) => (
-                    <li key={mac}>
-                      {mac}: {vendor}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {host.osmatches && host.osmatches.length > 0 && (
-              <div>
-                <h4>OS Matches:</h4>
-                <ul>
-                  {host.osmatches.map((osmatch, index) => (
-                    <li key={index}>
-                      {osmatch.name} (Accuracy: {osmatch.accuracy}%)
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {host.protocols.map((protocol) => (
-              <div key={protocol.protocol}>
-                <h4>Protocol: {protocol.protocol}</h4>
-                {renderTable(protocol.ports)}
-              </div>
-            ))}
-          </div>
-        ))}
-        <button onClick={toggleJson} style={{ marginTop: '10px' }}>
-          {showJson ? 'Hide JSON' : 'Show JSON'}
-        </button>
-        {showJson && (
-          <div>
-            <h2>Original JSON:</h2>
-            <pre style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '5px' }}>
-              {JSON.stringify(data, null, 2)}
-            </pre>
-          </div>
-        )}
+  const renderFormattedJSON = (data) => (
+    <div>
+      <h2>Scan Results (Table Format):</h2>
+      {data.hosts.map((host) => (
+        <div key={host.ip}>
+          <h3>Host: {host.ip}</h3>
+          <p>State: {host.state}</p>
+          {host.vendor && (
+            <div>
+              <h4>Vendor:</h4>
+              <ul>
+                {Object.entries(host.vendor).map(([mac, vendor]) => (
+                  <li key={mac}>
+                    {mac}: {vendor}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {host.osmatches && host.osmatches.length > 0 && (
+            <div>
+              <h4>OS Matches:</h4>
+              <ul>
+                {host.osmatches.map((osmatch, index) => (
+                  <li key={index}>
+                    {osmatch.name} (Accuracy: {osmatch.accuracy}%)
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {host.protocols.map((protocol) => (
+            <div key={protocol.protocol}>
+              <h4>Protocol: {protocol.protocol}</h4>
+              {renderTable(protocol.ports)}
+            </div>
+          ))}
+        </div>
+      ))}
+      <button onClick={toggleJson} style={{ marginTop: '10px' }}>
+        {showJson ? 'Hide JSON' : 'Show JSON'}
+      </button>
+      {showJson && (
         <div>
+          <h2>Original JSON:</h2>
+          <pre style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '5px' }}>
+            {JSON.stringify(data, null, 2)}
+          </pre>
+        </div>
+      )}
+      <div>
         <button onClick={toggleRAW} style={{ marginTop: '10px' }}>
           {showRAW ? 'Hide Raw' : 'Show RAW'}
         </button>
-        
-        { showRAW && (
+        {showRAW && (
           <div>
             <h2>Raw Nmap Output:</h2>
-             <pre style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '5px' }}>
-               {data.raw_output}
+            <pre style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '5px' }}>
+              {data.raw_output}
             </pre>
-        </div>
+          </div>
         )}
-        </div>
       </div>
-    );
-  };
-
+    </div>
+  );
 
   return (
     <Container maxWidth="md">
@@ -146,6 +148,11 @@ function App() {
         <Typography variant="h3" gutterBottom>
           Network Scanner
         </Typography>
+        {!isConnected && (
+          <div style={{ color: 'red' }}>
+            Connection to the backend is lost. Please check your network.
+          </div>
+        )}
         <FormControl fullWidth sx={{ my: 2 }}>
           <TextField
             label="Enter IP range (e.g., 192.168.1.0/24)"

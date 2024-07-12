@@ -1,6 +1,8 @@
-# Network Scanner
+# Network Scanner nmap GUI
 
-Network Scanner is a web-based application that scans a given network range to detect devices and their open ports. It provides an easy-to-use interface for network scanning and displays detailed information about discovered devices.
+Network Scanner is a web-based application that scans a given network range to detect devices and their open ports with nmap. It provides an easy-to-use interface for network scanning and displays detailed information about discovered devices.
+
+![Image](/media/scanner-b.gif) 
 
 ## Features
 
@@ -30,15 +32,21 @@ Network Scanner is a web-based application that scans a given network range to d
 
 2. Build and run the Docker containers:
     ```bash
+    docker build -t network-scanner .
     docker run -p 80:80 -p 8000:8000 -d --name NETSCAN network-scanner
     ```
+    or use ready image ghcr.io/securityphoton/nmap-gui:
+    ```bash
+    docker run -p 80:80 -p 8000:8000 -d --name NETSCAN ghcr.io/securityphoton/nmap-gui
+    ```
 
-3. Open your browser and navigate to `http://localhost:80` to access the application.
+3. Open your browser and navigate to `http://localhost:80` to access the application. Or you can change the default 80 port to your preference (for ex. 8080 -> 8080:80)
 
 ## Usage
 
 1. Enter the IP range you want to scan (e.g., `192.168.1.0/24`) in the input field.
-2. Select the type of scan from the dropdown (Discovery Scan, Most Common Ports, All Ports).
+2. Select the type of scan from the dropdown (Discovery Scan, Most Common Ports, All Ports, Custom).
+Most Common ports include - 21,22,23,25,53,80,110,139,143,443,445,3389,8080,8443.
 3. Click the "Scan" button to initiate the scan.
 4. View the scan results, which include detailed information about each discovered device.
 

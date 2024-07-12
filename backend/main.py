@@ -25,10 +25,9 @@ class ScanRequest(BaseModel):
     verbose: bool = False
     custom_params: str = None
     
-@app.get("/")
-def read_root():
-    logger.debug("Processing root request")
-    return {"Hello": "World"}
+@app.get("/api/health-check")
+async def health_check():
+    return {"status": "ok"}
 
 @app.post("/scan-network")
 async def scan_network(scan_request: ScanRequest):
