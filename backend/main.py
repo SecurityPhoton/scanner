@@ -25,7 +25,7 @@ class ScanRequest(BaseModel):
     verbose: bool = False
     custom_params: str = None
     
-@app.get("/api/health-check")
+@app.get("/health-check")
 async def health_check():
     return {"status": "ok"}
 
