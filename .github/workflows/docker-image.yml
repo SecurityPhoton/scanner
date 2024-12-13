@@ -39,5 +39,6 @@ jobs:
           tags: |
             ghcr.io/securityphoton/nmap-gui:latest
             ghcr.io/securityphoton/nmap-gui:${{ github.sha }}
+          platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
