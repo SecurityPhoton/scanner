@@ -35,7 +35,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: frontend.Dockerfile
+          file: ./frontend/dockerfile
           push: true
           tags: |
             ghcr.io/securityphoton/nmap-gui-frontend:latest
@@ -47,7 +47,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: backend.Dockerfile
+          file: ./backend/dockerfile
           push: true
           tags: |
             ghcr.io/securityphoton/nmap-gui-backend:latest
