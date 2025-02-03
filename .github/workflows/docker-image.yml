@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
@@ -26,9 +26,7 @@ jobs:
           context: .
           file: ./frontend/dockerfile
           push: true
-          tags: |
-            ghcr.io/securityphoton/nmap-gui-frontend:latest
-            ghcr.io/securityphoton/nmap-gui-frontend:${{ github.sha }}
+          tags: ghcr.io/securityphoton/nmap-gui-frontend:${{ github.sha }}
           
 
       - name: Build and push Backend image
@@ -37,7 +35,5 @@ jobs:
           context: .
           file: ./backend/dockerfile
           push: true
-          tags: |
-            ghcr.io/securityphoton/nmap-gui-backend:latest
-            ghcr.io/securityphoton/nmap-gui-backend:${{ github.sha }}
+          tags: ghcr.io/securityphoton/nmap-gui-backend:${{ github.sha }}
 
