@@ -26,13 +26,13 @@ Network Scanner is a web-based application that scans a given network range to d
 
 You can use already build image ghcr.io/securityphoton/nmap-gui:
 ```bash
-docker run -p 80:80 -p 8000:8000 -d --name NETSCAN ghcr.io/securityphoton/nmap-gui
+docker run -p 8089:80 -d --name NETSCAN ghcr.io/securityphoton/nmap-gui
 ```
 
 NOTE!
 Use aditional ```--network host``` parametr if you plan ARP scans of local network (in this case ignore HOST:CONTAINER port mapings).
 ```bash
-docker run --network host -d --name NETSCAN ghcr.io/securityphoton/nmap-gui:latest
+docker run -p 8089:80 --network host -d --name NETSCAN ghcr.io/securityphoton/nmap-gui:latest
 ```
 
 or chose the long way (in case you need some modifications):
@@ -46,10 +46,10 @@ or chose the long way (in case you need some modifications):
 2. Build and run the Docker containers:
     ```bash
     docker build -t network-scanner .
-    docker run -p 80:80 -p 8000:8000 -d --name NETSCAN network-scanner
+    docker run -p 8089:80 -d --name NETSCAN network-scanner
     ```
 
-3. Open your browser and navigate to `http://localhost:80` to access the application. Or you can change the default 80 port to your preference (for ex. 8080 -> 8080:80)
+3. Open your browser and navigate to `http://localhost:8089` to access the application. Or you can change the default 8089 port to your preference (for ex. 8080 -> 8080:80)
 
 ## Usage
 
