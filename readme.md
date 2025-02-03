@@ -39,8 +39,8 @@ or chose the long way (in case you need some modifications):
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/network-scanner.git
-    cd network-scanner
+    git clone https://github.com/yourusername/scanner.git
+    cd scanner
     ```
 
 2. Build and run the Docker containers:
