@@ -1,0 +1,16 @@
+# Run from ghcr.io with already built images
+
+services:
+  frontend:
+    image: ghcr.io/securityphoton/nmap-gui-frontend:latest
+    container_name: NETSCAN-frontend
+    ports:
+      - "8089:80"
+    restart: always
+
+  backend:
+    image: ghcr.io/securityphoton/nmap-gui-backend:latest
+    container_name: NETSCAN-backend
+    ports:
+      - "8000:8000"
+    restart: always

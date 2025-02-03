@@ -18,24 +18,37 @@ Network Scanner is a web-based application that scans a given network range to d
 - Network Scanning: Nmap
 - Containerization: Docker
 
-## Prerequisites
+## Prerequisites to run
 
 - Docker
+- Docker Compose (optional)
 
 ## Installation
 
-You can use already build image ghcr.io/securityphoton/nmap-gui:
+You can use already built images for frontend and backend:
+
+### Run Frontend:
 ```bash
-docker run -p 8089:80 -p 8000:8000 -d --name NETSCAN ghcr.io/securityphoton/nmap-gui
+docker run -p 8089:80 -d --name NETSCAN-frontend ghcr.io/securityphoton/nmap-gui-frontend:latest
 ```
+
+### Run Backend:
+```bash
+docker run -p 8000:8000 -d --name NETSCAN-backend ghcr.io/securityphoton/nmap-gui-backend:latest
+```
+### Or one line option to start both
+```bash
+docker run -p 8089:80 -d --name NETSCAN-frontend ghcr.io/securityphoton/nmap-gui-frontend:latest && docker run -p 8000:8000 -d --name NETSCAN-backend ghcr.io/securityphoton/nmap-gui-backend:latest
+```
+ Or use docker-compose-start.yml file to run with docker compose.
 
 NOTE!
-Use aditional ```--network host``` parametr if you plan ARP scans of local network (in this case ignore HOST:CONTAINER port mapings).
+Use additional `--network host` parameter if you plan ARP scans of the local network (in this case, ignore HOST:CONTAINER port mappings).
 ```bash
-docker run -p 8089:80 -p 8000:8000 --network host -d --name NETSCAN ghcr.io/securityphoton/nmap-gui:latest
+docker run --network host -d --name NETSCAN-backend ghcr.io/securityphoton/nmap-gui-backend:latest
 ```
 
-or chose the long way (in case you need some modifications):
+or choose the long way (in case you need some modifications):
 
 1. Clone the repository:
     ```bash
@@ -43,17 +56,16 @@ or chose the long way (in case you need some modifications):
     cd scanner
     ```
 
-2. Build and run the Docker containers:
+2. Build and run the Docker containers with docker compose:
     ```bash
-    docker build -t network-scanner .
-    docker run -p 8089:80 -p 8000:8000 -d --name NETSCAN network-scanner
+    docker compose up --build -d
     ```
 
-3. Open your browser and navigate to `http://localhost:8089` to access the application. Or you can change the default 8089 port to your preference (for ex. 8080 -> 8080:80)
+3. Open your browser and navigate to `http://localhost:8089` (or your http://your-host-ip:8089) to access the application. Or you can change the default 8089 port to your preference (for ex. 8080 -> 8080:80) in the docker compose file.
 
 ## Usage
 
-1. Enter the IP range you want to scan (e.g., `192.168.1.0/24`) in the input field.
+1. Enter the IP, DNS name or range you want to scan (e.g., `192.168.1.0/24`) in the input field.
 2. Select the type of scan from the dropdown (Discovery Scan, Most Common Ports, All Ports, Custom).
 Most Common ports include - 21,22,23,25,53,80,110,139,143,443,445,3389,8080,8443.
 3. Click the "Scan" button to initiate the scan.
@@ -63,9 +75,9 @@ Most Common ports include - 21,22,23,25,53,80,110,139,143,443,445,3389,8080,8443
 
 - `frontend/`: Contains the React frontend source code.
 - `backend/`: Contains the FastAPI backend source code.
-- `Dockerfile`: Dockerfile for building the Docker image.
-- `nginx.conf`: Nginx global configuration file.
-- `default.conf`: Nginx configuration file for app.
+- `frontend/Dockerfile`: Dockerfile for the frontend.
+- `backend/Dockerfile`: Dockerfile for the backend.
+- `frontend/nginx.conf`: Nginx global configuration file.
 
 ## Example Response
 
@@ -153,12 +165,19 @@ The React app will be running at `http://localhost:3000`.
 
 The FastAPI server will be running at `http://localhost:8000`.
 
-### Building docker image
+### Building docker images
 
-To build docker image run in project folder:
-    ```bash
-    docker build -t network-scanner .
-    ```
+To build docker images, run in the project folder:
+
+#### Frontend:
+```bash
+docker build -t network-scanner-frontend -f frontend/dockerfile .
+```
+
+#### Backend:
+```bash
+docker build -t network-scanner-backend -f backend/dockerfile .
+```
 
 
 ## Contributing

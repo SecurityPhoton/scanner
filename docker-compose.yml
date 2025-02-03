@@ -1,0 +1,16 @@
+# Build and run from source
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "8089:80"
+    depends_on:
+      - backend
+    restart: always
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    restart: always
