@@ -1,9 +1,7 @@
 name: Build and Push Docker Images
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -40,8 +38,7 @@ jobs:
           tags: |
             ghcr.io/securityphoton/nmap-gui-frontend:latest
             ghcr.io/securityphoton/nmap-gui-frontend:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          
 
       - name: Build and push Backend image
         uses: docker/build-push-action@v5
@@ -52,5 +49,4 @@ jobs:
           tags: |
             ghcr.io/securityphoton/nmap-gui-backend:latest
             ghcr.io/securityphoton/nmap-gui-backend:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+
