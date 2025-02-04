@@ -26,7 +26,9 @@ jobs:
           context: ./frontend
           file: ./frontend/dockerfile
           push: true
-          tags: ghcr.io/securityphoton/nmap-gui-frontend:${{ github.sha }}
+          tags: |
+            ghcr.io/securityphoton/nmap-gui-frontend:${{ github.sha }}
+            ghcr.io/securityphoton/nmap-gui-frontend:latest
           
 
 
