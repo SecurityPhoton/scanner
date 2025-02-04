@@ -26,7 +26,7 @@ jobs:
           context: ./frontend
           file: ./frontend/dockerfile
           push: true
-          tags: ghcr.io/securityphoton/nmap-gui-frontend:${{ github.sha }}
+          tags: ghcr.io/securityphoton/nmap-gui:frontend${{ github.sha }}
           
 
       - name: Build and push Backend image
@@ -35,5 +35,5 @@ jobs:
           context: ./backend
           file: ./backend/dockerfile
           push: true
-          tags: ghcr.io/securityphoton/nmap-gui-backend:${{ github.sha }}
+          tags: ghcr.io/securityphoton/nmap-gui:backend${{ github.sha }}
 
