@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -23,7 +23,7 @@ jobs:
       - name: Build and push Frontend image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./frontend
           file: ./frontend/dockerfile
           push: true
           tags: ghcr.io/securityphoton/nmap-gui-frontend:${{ github.sha }}
@@ -32,7 +32,7 @@ jobs:
       - name: Build and push Backend image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./backend
           file: ./backend/dockerfile
           push: true
           tags: ghcr.io/securityphoton/nmap-gui-backend:${{ github.sha }}
