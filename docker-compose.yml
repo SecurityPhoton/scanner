@@ -3,14 +3,26 @@
 services:
   frontend:
     build: ./frontend
+    container_name: NETSCAN-frontend
     ports:
       - "8089:80"
     depends_on:
       - backend
     restart: always
+    networks:
+      - netscan-network
+
 
   backend:
     build: ./backend
+    container_name: NETSCAN-backend
     ports:
       - "8000:8000"
     restart: always
+    networks:
+      - netscan-network
+
+
+networks:
+  netscan-network:
+    driver: bridge
