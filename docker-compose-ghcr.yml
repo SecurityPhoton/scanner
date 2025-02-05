@@ -1,3 +1,5 @@
+# Run from ghcr.io
+
 services:
   frontend:
     image: ghcr.io/securityphoton/nmap-gui-frontend:latest

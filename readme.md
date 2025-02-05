@@ -77,7 +77,7 @@ Most Common ports include - 21,22,23,25,53,80,110,139,143,443,445,3389,8080,8443
 - `backend/`: Contains the FastAPI backend source code.
 - `frontend/Dockerfile`: Dockerfile for the frontend.
 - `backend/Dockerfile`: Dockerfile for the backend.
-- `frontend/nginx.conf`: Nginx global configuration file.
+- `frontend/nginx.conf`: Nginx global configuration file. Note, that it contains the timeout settings equal to 360 s - so for a scans, that will take more time to complete, it will not get the results to GUI. This is workaround, until it will be re-made.
 
 ## Example Response
 
