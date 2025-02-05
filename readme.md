@@ -60,8 +60,9 @@ or choose the long way (in case you need some modifications):
     ```bash
     docker compose up --build -d
     ```
+Note! there is two docker-compose files. One for local build and other for running app from already build images.
 
-3. Open your browser and navigate to `http://localhost:8089` (or your http://your-host-ip:8089) to access the application. Or you can change the default 8089 port to your preference (for ex. 8080 -> 8080:80) in the docker compose file.
+3. Open your browser and navigate to `http://localhost:8089` (or your http://your-docker-host-ip:8089) to access the application. Or you can change the default 8089 port to your preference (for ex. 8080 -> 8080:80) in the docker compose file.
 
 ## Usage
 
@@ -70,6 +71,8 @@ or choose the long way (in case you need some modifications):
 Most Common ports include - 21,22,23,25,53,80,110,139,143,443,445,3389,8080,8443.
 3. Click the "Scan" button to initiate the scan.
 4. View the scan results, which include detailed information about each discovered device.
+
+The "Verbose output" checkbox is for adding -v key to backend app log output in container, and does not do anything on the GUI.  
 
 ## Project Structure
 
